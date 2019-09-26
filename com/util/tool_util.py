@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import tensorflow as tf
+import numpy as np
 
 
 def reshape_layer(bottom, num_dim, name):
@@ -50,3 +51,17 @@ def smooth_l1_loss(bbox_pred, bbox_targets, bbox_inside_weights, bbox_outside_we
     out_loss_box = bbox_outside_weights * in_loss_box
     loss_box = tf.reduce_mean(tf.reduce_sum(out_loss_box, axis=dim))
     return loss_box
+
+
+def unmap(data, count, inds, fill=0):
+    """ Unmap a subset of item (data) back to the original set of items (of
+    size count) """
+    if len(data.shape) == 1:  # 如果是一维数组
+        ret = np.empty((count,), dtype=np.float32)
+        ret.fill(fill)
+        ret[inds] = data
+    else:
+        ret = np.empty((count,) + data.shape[1:], dtype=np.float32)
+        ret.fill(fill)
+        ret[inds, :] = data
+    return ret

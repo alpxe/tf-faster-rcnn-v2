@@ -28,6 +28,27 @@ class vggnet:
 
             return net
 
+    @staticmethod
+    def full(pool5, is_training):
+        """
+        全连接层
+        :param pool5:
+        :param is_training:
+        :param reuse:
+        :return: 2000 x [4096]
+        """
+        with tf.variable_scope("full"):
+            pool5_flat = slim.flatten(pool5, scope='flatten')  # 铺开
+            fc6 = slim.fully_connected(pool5_flat, 4096, scope='fc6')  # 全连接
+            if is_training:
+                fc6 = slim.dropout(fc6, keep_prob=0.5, is_training=True, scope='dropout6')  # dropout
+
+            fc7 = slim.fully_connected(fc6, 4096, scope='fc7')  # 第二层全连接
+            if is_training:
+                fc7 = slim.dropout(fc7, keep_prob=0.5, is_training=True, scope='dropout7')
+
+        return fc7
+
     def __get_variables_to_resotre(self, vgg_path):
         """
         Get the variables to restore, ignoring the variables to fix

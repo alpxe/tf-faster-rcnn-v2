@@ -46,23 +46,28 @@ vgg = vggnet(is_training=is_training)
 map = vgg.vgg16(img)  # 经过vgg16 -> 特征图
 
 net = network(data, is_training=is_training)
-anchors = net.build_network(map)
+net.build_network(map)
+loss = net.losses()
 
 with tf.Session() as sess:
     sess.run(tf.global_variables_initializer())
-    res_img, resa = sess.run([img, anchors])
-    res_img = res_img[0]
 
-    print(len(resa))
-    for item in resa:
-        # print(item)
-        x1 = np.int(item[1])
-        y1 = np.int(item[2])
-        x2 = np.int(item[3])
-        y2 = np.int(item[4])
+    print(sess.run(loss))
+    # for i in range(10):
 
-        cv2.rectangle(res_img, (x1, y1), (x2, y2), (126, 0, 0), 1)
-
-    cv2.namedWindow("camera", cv2.WINDOW_NORMAL)
-    cv2.imshow("camera", res_img)
-    cv2.waitKey()
+    # res_img, resa = sess.run([img, anchors])
+    # res_img = res_img[0]
+    #
+    # print(len(resa))
+    # for item in resa:
+    #     # print(item)
+    #     x1 = np.int(item[1])
+    #     y1 = np.int(item[2])
+    #     x2 = np.int(item[3])
+    #     y2 = np.int(item[4])
+    #
+    #     cv2.rectangle(res_img, (x1, y1), (x2, y2), (126, 0, 0), 1)
+    #
+    # cv2.namedWindow("camera", cv2.WINDOW_NORMAL)
+    # cv2.imshow("camera", res_img)
+    # cv2.waitKey()
